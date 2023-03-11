@@ -191,7 +191,6 @@ def simulateBot(pathCoords, maze):
     for i in pathCoords:
        mazeCopy = maze.copy()
        currCirc = cv2.circle(mazeCopy, (int(i[0]),int(i[1])), 5, color=(255,0,255), thickness=-1)
-       time.sleep(150/1000)
        outVid.write(cv2.flip(currCirc,0))
 
 print("\nWelcome to the Dijkstra Maze Finder Program! \n")
@@ -199,11 +198,13 @@ print("\nWelcome to the Dijkstra Maze Finder Program! \n")
 outVid = cv2.VideoWriter('output.avi',cv2.VideoWriter_fourcc(*'MJPG'), 60, (600,250))
 
 maze = drawMaze()
+blankMaze = maze.copy()
 
 # get start and goal nodes
 start = getValidInput("start", maze)
 goal = getValidInput("goal", maze)
 print()
+print("Pathfinding... \n")
 
 startTime = time.time()
 
@@ -214,16 +215,19 @@ openList = PriorityQueue()
 parentDict = {1:None}
 coordDict = {1:start}
 closedSet = set()
+openSet = set()
 
 # [c2c, index, coords, cost, actioncost]
 startNode = [0, 1, start, 0, 0]
 index = startNode[1]
 
 openList.put(startNode)
+openSet.add(start)
 maze[startNode[2][1], startNode[2][0]] = (255,0,255)
 
 while not openList.empty() and solved == False:
     first = openList.get()
+    openSet.remove(first[2])
     closedSet.add(first[2])
 
     if ((first[2] == goal)):
@@ -232,29 +236,28 @@ while not openList.empty() and solved == False:
         print("Current node index: ", first[1], " and cost: ", round(first[3],2), "\n")
         solved = True
 
-        
         pathIndices, pathCoords = generatePath(first[1], first[2], maze)
         print("Displaying generated path... \n")
-        # display the path image using opencv
-        maze = cv2.flip(maze, 0)
-        maze = cv2.resize(maze, (1200,500), interpolation = cv2.INTER_AREA)
-        cv2.imshow('Maze', maze)
+        # # display the path image using opencv
+        dispMaze = maze.copy()
+        dispMaze = cv2.flip(dispMaze, 0)
+        dispMaze = cv2.resize(dispMaze, (1200,500), interpolation = cv2.INTER_AREA)
+        cv2.imshow('Maze', dispMaze)
         cv2.waitKey(0)
 
         print("Generating simulation... \n")
         pathIndices.reverse()
         pathCoords.reverse()
-        simulateBot(pathCoords, maze)
+        simulateBot(pathCoords, closedSet, blankMaze)
         print("Simulation complete! \n")
         break
 
     results = searchNode(first[2], maze)
-    # print(*results,sep='\n')
  
     for i in results:
         if not i[2] in closedSet:
             maze[i[2][1], i[2][0]] = (255,0,0)
-            if not any(i[2] in k for k in openList.queue):
+            if not i[2] in openSet:
                 index += 1
                 i[1] = index
                 i[0] = first[0] + i[4]
@@ -264,20 +267,12 @@ while not openList.empty() and solved == False:
                 coordDict[i[1]] = i[2]
 
                 openList.put(i)
+                openSet.add(i[2])
         else:
             if i[3] > first[0] + i[4]:
                 parentDict[i[1]] = first[1]
                 i[0] = first[0] + i[4]
                 i[3] = i[0]
-
-    outVid.write(cv2.flip(maze,0))
-
-    # print("No. of visited nodes: ", len(closedSet), 
-    #       "No. of identified nodes: ", index,  
-    #       "Length of Stack: ", openList.qsize(), "\n")
-
-    # iter = input("Iterate?")
-    # print()
 
 if solved == False:
     print ("Failure! Goal node not found")
@@ -287,4 +282,4 @@ print("Saving video... \n")
 outVid.release()
 cv2.destroyAllWindows()
 
-print("Video saved successfully! Program termination")
+print("Video saved successfully! Program termination \n")
