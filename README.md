@@ -1,2 +1,2 @@
-# dijkatra-algo-maze-search
+# dijkstra-algo-maze-search
 A basic visual implementation of the Dijkstra algorithm for a point robot navigating a maze
