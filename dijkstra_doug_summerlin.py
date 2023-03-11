@@ -187,6 +187,13 @@ def generatePath(nodeIndex, nodeCoords, maze):
 
     return pathIndices, pathCoords
 
+def simulateBot(pathCoords, maze):
+    for i in pathCoords:
+       mazeCopy = maze.copy()
+       currCirc = cv2.circle(mazeCopy, (int(i[0]),int(i[1])), 5, color=(255,0,255), thickness=-1)
+       time.sleep(150/1000)
+       outVid.write(cv2.flip(currCirc,0))
+
 print("\nWelcome to the Dijkstra Maze Finder Program! \n")
 
 outVid = cv2.VideoWriter('output.avi',cv2.VideoWriter_fourcc(*'MJPG'), 60, (600,250))
@@ -196,6 +203,7 @@ maze = drawMaze()
 # get start and goal nodes
 start = getValidInput("start", maze)
 goal = getValidInput("goal", maze)
+print()
 
 startTime = time.time()
 
@@ -221,12 +229,23 @@ while not openList.empty() and solved == False:
     if ((first[2] == goal)):
         elapsedTime = time.time() - startTime
         print ("Yay! Goal node located... Operation took ", elapsedTime, " seconds.")
-        print("Current node index: ", first[1], " and cost: ", round(first[3],2))
+        print("Current node index: ", first[1], " and cost: ", round(first[3],2), "\n")
         solved = True
 
-        index, coords = generatePath(first[1], first[2], maze)
-        # pathNodes.reverse()
-        # pathStates.reverse()
+        
+        pathIndices, pathCoords = generatePath(first[1], first[2], maze)
+        print("Displaying generated path... \n")
+        # display the path image using opencv
+        maze = cv2.flip(maze, 0)
+        maze = cv2.resize(maze, (1200,500), interpolation = cv2.INTER_AREA)
+        cv2.imshow('Maze', maze)
+        cv2.waitKey(0)
+
+        print("Generating simulation... \n")
+        pathIndices.reverse()
+        pathCoords.reverse()
+        simulateBot(pathCoords, maze)
+        print("Simulation complete! \n")
         break
 
     results = searchNode(first[2], maze)
@@ -263,11 +282,9 @@ while not openList.empty() and solved == False:
 if solved == False:
     print ("Failure! Goal node not found")
 
-# display the image using opencv
-maze = cv2.flip(maze, 0)
-maze = cv2.resize(maze, (1800,750), interpolation = cv2.INTER_AREA)
-cv2.imshow('Maze', maze)
-cv2.waitKey(0)
+print("Saving video... \n")
 
 outVid.release()
 cv2.destroyAllWindows()
+
+print("Video saved successfully! Program termination")
