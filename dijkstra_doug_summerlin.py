@@ -217,7 +217,9 @@ def simulateBot(pathCoords, searchedNodeCoords, emptyMaze):
 
 print("\nWelcome to the Dijkstra Maze Finder Program! \n")
 
-outVid = cv2.VideoWriter('output.avi',cv2.VideoWriter_fourcc(*'MJPG'), 60, (600,250))
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+outVid = cv2.VideoWriter('output.mp4', fourcc, 60, (600,250))
+#outVid = cv2.VideoWriter('output.avi',cv2.VideoWriter_fourcc(*'MJPG'), 60, (600,250))
 
 maze = drawMaze()
 blankMaze = maze.copy()
@@ -300,28 +302,33 @@ if solved == False:
     print ("Failure! Goal node not found")
 
 print("Saving video... ")
-
 outVid.release()
-
 print("Video saved successfully! Displaying video... \n")
 
-cap = cv2.VideoCapture('output.avi')
+cap = cv2.VideoCapture('output.mp4')
 
 if cap.isOpened() == False:
     print("Error File Not Found")
 
 while cap.isOpened():
     ret,frame= cap.read()
-
     if ret == True:
         cv2.imshow('frame', frame)
-
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
     else:
         break
 
 cap.release()
 print("Video displayed successfully! Program termination  \n")
 cv2.destroyAllWindows()
+
+# Resources
+# https://www.programiz.com/dsa/priority-queue
+# https://bobbyhadz.com/blog/python-input-tuple
+# https://stackoverflow.com/questions/23294658/asking-the-user-for-input-until-they-give-a-valid-response
+# https://www.w3schools.com/python/python_sets.asp
+# https://www.freecodecamp.org/news/python-set-how-to-create-sets-in-python/#:~:text=How%20to%20Add%20Items%20to%20a%20Set%20in%20Python,passed%20in%20as%20a%20parameter.&text=We%20added%20a%20new%20item,add(%22Ihechikara%22)%20.
+# https://stackoverflow.com/questions/30103077/what-is-the-codec-for-mp4-videos-in-python-opencv
+# https://docs.opencv.org/3.4/dd/d43/tutorial_py_video_display.html
+# https://www.geeksforgeeks.org/python-play-a-video-using-opencv/
