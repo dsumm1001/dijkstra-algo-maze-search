@@ -2,6 +2,8 @@
 Author: Doug Summerlin (dsumm1001@gmail.com, dsummerl@umd.edu)  
 ENPM661 Spring 2023: Robotic Path Planning
 
+Github Repo Link: https://github.com/dsumm1001/dijkstra-algo-maze-search.git
+
 This project is basic visual implementation of the Dijkstra algorithm for a point robot navigating a maze
 
 FILESYSTEMS: cd into the folder titled "proj2_douglas_summerlin" after downloading it on an Ubuntu or Windows operating system. 
@@ -18,7 +20,7 @@ Ensure the following libraries are installed so they can be imported as such:
 OPERATING SYSTEM: Windows 11 (but Ubuntu Linux should also work)
 
 TO RUN SCRIPTS:   
-\$ cd ~/home/.../proj2\_douglas\_summerlin.zip/  
+\$ cd ~/home/.../proj2\_douglas\_summerlin/  
 \$ python3 dijkstra\_doug\_summerlin.py
 
 All of this script is hardcoded so just run the script and all of the ouput video .mp4 file will be generated.
